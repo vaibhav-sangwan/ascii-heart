@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ascii_heart", "ascii_heart.csproj", "{463088EE-16C0-426C-9CE7-88CB32D1F49F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{463088EE-16C0-426C-9CE7-88CB32D1F49F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{463088EE-16C0-426C-9CE7-88CB32D1F49F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{463088EE-16C0-426C-9CE7-88CB32D1F49F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{463088EE-16C0-426C-9CE7-88CB32D1F49F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C089886A-DE26-49A2-81CC-5DF47C3BB4EF}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,16 @@
+C:\Users\sangw\source\repos\ascii_heart\bin\Debug\net5.0\ascii_heart.exe
+C:\Users\sangw\source\repos\ascii_heart\bin\Debug\net5.0\ascii_heart.deps.json
+C:\Users\sangw\source\repos\ascii_heart\bin\Debug\net5.0\ascii_heart.runtimeconfig.json
+C:\Users\sangw\source\repos\ascii_heart\bin\Debug\net5.0\ascii_heart.runtimeconfig.dev.json
+C:\Users\sangw\source\repos\ascii_heart\bin\Debug\net5.0\ascii_heart.dll
+C:\Users\sangw\source\repos\ascii_heart\bin\Debug\net5.0\ref\ascii_heart.dll
+C:\Users\sangw\source\repos\ascii_heart\bin\Debug\net5.0\ascii_heart.pdb
+C:\Users\sangw\source\repos\ascii_heart\obj\Debug\net5.0\ascii_heart.csproj.AssemblyReference.cache
+C:\Users\sangw\source\repos\ascii_heart\obj\Debug\net5.0\ascii_heart.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sangw\source\repos\ascii_heart\obj\Debug\net5.0\ascii_heart.AssemblyInfoInputs.cache
+C:\Users\sangw\source\repos\ascii_heart\obj\Debug\net5.0\ascii_heart.AssemblyInfo.cs
+C:\Users\sangw\source\repos\ascii_heart\obj\Debug\net5.0\ascii_heart.csproj.CoreCompileInputs.cache
+C:\Users\sangw\source\repos\ascii_heart\obj\Debug\net5.0\ascii_heart.dll
+C:\Users\sangw\source\repos\ascii_heart\obj\Debug\net5.0\ref\ascii_heart.dll
+C:\Users\sangw\source\repos\ascii_heart\obj\Debug\net5.0\ascii_heart.pdb
+C:\Users\sangw\source\repos\ascii_heart\obj\Debug\net5.0\ascii_heart.genruntimeconfig.cache
