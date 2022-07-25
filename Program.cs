@@ -109,48 +109,48 @@ namespace ascii_heart
             return normalVector;
         }
 
-        static void Main(string[] args)
-        {
-            List<Point> points = new List<Point>();
-            for (int x = -windowWidth / 2; x < windowWidth / 2; x++)
-            {
-                for (int y = -windowWidth / 2; y < windowWidth / 2; y++)
-                {
-                    int xSquare = x * x;
-                    int xCube = x * x * x;
-                    int ySquare = y * y;
-                    int yCube = y * y * y;
-                    double prevValue = 1;
-                    for (int k = -camDistance; k <= camDistance; k++)
-                    {
-                        double currValue = (MathF.Pow((float)(xSquare + (2 * k * k) + ySquare - 100), 3) + (40 * xSquare * yCube) - (0.045 * k * k * yCube));
-                        //if ((MathF.Pow((float)(ySquare + (2 * k * k) + xSquare - 100), 3) - (40 *ySquare * xCube) - (0.045 * k * k * xCube)) <= 0)  //front horizontal
-                        if (prevValue * currValue <= 0)  //front vertical
-                                                                                                                                                     //if ((MathF.Pow((float)(xSquare + (2 * ySquare) + (k * k) - 100), 3) - (40 * xSquare * k * k * k) - (0.045 * ySquare * k * k * k)) <= 0) //top horizontal
-                        {
-                            points.Add(new Point(new Vector3(x, y, k)));
-                        }
-                        prevValue = currValue;
-                    }
-                }
-            }
-            renderFrame(points);
-            Console.ReadKey();
-            foreach (Point point in points)
-                Console.WriteLine(point);
-            Console.ReadKey();
-            for (; ; )
-            {
-                Console.Clear();
-                renderFrame(points);
-                theta += 0.2f;
-                if (theta >= 2 * Math.PI)
-                {
-                    theta = 0;
-                }
-                Thread.Sleep(10);
-            }
-        }
+        //static void Main(string[] args)
+        //{
+        //    List<Point> points = new List<Point>();
+        //    for (int x = -windowWidth / 2; x < windowWidth / 2; x++)
+        //    {
+        //        for (int y = -windowWidth / 2; y < windowWidth / 2; y++)
+        //        {
+        //            int xSquare = x * x;
+        //            int xCube = x * x * x;
+        //            int ySquare = y * y;
+        //            int yCube = y * y * y;
+        //            double prevValue = 1;
+        //            for (int k = -camDistance; k <= camDistance; k++)
+        //            {
+        //                double currValue = (MathF.Pow((float)(xSquare + (2 * k * k) + ySquare - 100), 3) + (40 * xSquare * yCube) - (0.045 * k * k * yCube));
+        //                //if ((MathF.Pow((float)(ySquare + (2 * k * k) + xSquare - 100), 3) - (40 *ySquare * xCube) - (0.045 * k * k * xCube)) <= 0)  //front horizontal
+        //                if (prevValue * currValue <= 0)  //front vertical
+        //                                                                                                                                             //if ((MathF.Pow((float)(xSquare + (2 * ySquare) + (k * k) - 100), 3) - (40 * xSquare * k * k * k) - (0.045 * ySquare * k * k * k)) <= 0) //top horizontal
+        //                {
+        //                    points.Add(new Point(new Vector3(x, y, k)));
+        //                }
+        //                prevValue = currValue;
+        //            }
+        //        }
+        //    }
+        //    renderFrame(points);
+        //    Console.ReadKey();
+        //    foreach (Point point in points)
+        //        Console.WriteLine(point);
+        //    Console.ReadKey();
+        //    for (; ; )
+        //    {
+        //        Console.Clear();
+        //        renderFrame(points);
+        //        theta += 0.2f;
+        //        if (theta >= 2 * Math.PI)
+        //        {
+        //            theta = 0;
+        //        }
+        //        Thread.Sleep(10);
+        //    }
+        //}
 
     }
 }
