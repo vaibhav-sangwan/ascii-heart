@@ -94,8 +94,8 @@ namespace ascii_heart
                 xAfterRevolving = z * Math.Sin(theta) + x * Math.Cos(theta);
                 zAfterRevolving = z * Math.Cos(theta) - x * Math.Sin(theta);
                 zDash = -(int)zAfterRevolving + zDistance;
-                xDash = width / 2 + (int)(xAfterRevolving * (zDash / (zDash + 10)));  //30 is viewer distance from screen, i.e., k1
-                yDash = height / 2 + (int)(y * (zDash / (zDash + 10)));
+                xDash = width / 2 + (int)(xAfterRevolving * (200 / (zDash + 200)));  //200 is viewer distance from screen, i.e., k1
+                yDash = height / 2 + (int)(y * (200 / (zDash + 200)));
 
                 Vector3 unitNormalAfterRevolving = new Vector3();
                 unitNormalAfterRevolving.Y = point.unitNormal.Y;
