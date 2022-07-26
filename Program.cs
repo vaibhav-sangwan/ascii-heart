@@ -2,155 +2,146 @@
 using System.Numerics;
 using System.Threading;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ascii_heart
 {
     class Program
     {
+        const float theta_spacing = 0.3f;
+        static float theta = 0;
+        const int width = 211;
+        const int height = 50;
+        const int zDistance = 50;
+        static Vector3 light = new Vector3(0, 0, 1);
+
+        static List<Point> points = new List<Point>();
+
         public class Point
         {
-            public Vector3 coord = new Vector3();
-            public Vector3 normalVector = new Vector3(0, 0, -1);
-            public Point(Vector3 coordinates)
+            public Vector3 pos = new Vector3();
+            public Vector3 unitNormal = new Vector3();
+
+            public Point(Vector3 position)
             {
-                coord = coordinates;
-                normalVector = calcNormalAt(coord);
+                int x = (int)position.X, y = (int)position.Y, z = (int)position.Z;
+                int xSq = x * x, zSq = z * z, ySq = y * y, yCu = y * y * y;
+
+                Vector3 normal = new Vector3();
+                normal.X = (float)((3 * Math.Pow((xSq + (2 * zSq) + ySq - 200), 2) * 2 * x) + (80 * x * yCu));
+                normal.Y = (float)((3 * Math.Pow((xSq + (2 * zSq) + ySq - 200), 2) * 2 * y) + (120 * xSq * ySq) - (3 * 0.045f * zSq * ySq));
+                normal.Z = (float)((3 * Math.Pow((xSq + (2 * zSq) + ySq - 200), 2) * 4 * z) - (2 * 0.045f * z * yCu));
+
+                this.unitNormal.X = normal.X / normal.Length();
+                this.unitNormal.Y = normal.Y / normal.Length();
+                this.unitNormal.Z = normal.Z / normal.Length();
+
+                this.pos.X = x;
+                this.pos.Y = y;
+                this.pos.Z = z;
+            }
+        }
+
+        static void getPoints()
+        {
+            int xSq = 0, ySq = 0, zSq = 0, xCu = 0, yCu = 0, zCu = 0;
+            for (int y = -20; y < 20; y++)
+            {
+                for (int x = -20; x < 20; x++)
+                {
+                    for (int z = -20; z <= 20; z++)
+                    {
+                        xSq = x * x;
+                        ySq = y * y;
+                        zSq = z * z;
+                        xCu = x * x * x;
+                        yCu = y * y * y;
+                        zCu = z * z * z;
+                        if (Math.Pow((xSq + (2 * zSq) + ySq - 200), 3) + (40 * xSq * yCu) - (0.045 * zSq * yCu) <= 0)
+                        {
+                            Point point = new Point(new Vector3(x, y, z));
+                            points.Add(point);
+                        }
+                    }
+                }
             }
 
         }
-
-        static int windowHeight = Console.WindowHeight;
-        static int windowWidth = Console.WindowWidth;
-        static int camDistance = 30;
-        static int r = 10; //sphereRadius
-        static int rSquare = r * r;
-        static int alpha = windowWidth / 2;
-        static int beta = windowHeight / 2;
-        static float theta = 0; //angle of rotation of heart about y-axis
-        static Vector3 lightVector = new Vector3(0, 0, 1);     //positive x is towards right, positive y is downwards, positive z is out of the screen
-        static double magOfLightVector = lightVector.Length();
-
-
-        static public void renderFrame(List<Point> points)
+        static void render()
         {
+            float[,] zBuffer = new float[width, height];
+            char[,] output = new char[width, height];
+            for (int j = 0; j < height; j++)
+            {
+                for (int i = 0; i < width; i++)
+                {
+                    output[i, j] = ' ';
+                    zBuffer[i, j] = 1000;
+                }
+            }
+            int x = 0, y = 0, z = 0;
+            int xDash = 0, yDash = 0;
+            float zDash = 0;
             foreach(Point point in points)
             {
-                Vector3 coord = getCoords(theta, point.coord);
-                drawChar(coord, point);
+                x = (int)point.pos.X;
+                y = (int)point.pos.Y;
+                z = (int)point.pos.Z;
+
+                double xAfterRevolving = 0, zAfterRevolving = 0;
+                xAfterRevolving = z * Math.Sin(theta) + x * Math.Cos(theta);
+                zAfterRevolving = z * Math.Cos(theta) - x * Math.Sin(theta);
+                zDash = -(int)zAfterRevolving + zDistance;
+                xDash = width / 2 + (int)(xAfterRevolving * (zDash / (zDash + 10)));  //30 is viewer distance from screen, i.e., k1
+                yDash = height / 2 + (int)(y * (zDash / (zDash + 10)));
+
+                Vector3 unitNormalAfterRevolving = new Vector3();
+                unitNormalAfterRevolving.Y = point.unitNormal.Y;
+                unitNormalAfterRevolving.X = (float)(point.unitNormal.Z * (Math.Sin(theta)) + point.unitNormal.X * (Math.Cos(theta)));
+                unitNormalAfterRevolving.Z = (float)(point.unitNormal.Z * (Math.Cos(theta)) - point.unitNormal.X * (Math.Sin(theta)));
+
+                //dot product normal with lighting vector
+                float dotProduct = Vector3.Dot(unitNormalAfterRevolving, light / light.Length());
+
+                //print character according to lumination
+                if (zDash < zBuffer[xDash, yDash])
+                {
+                    zBuffer[xDash, yDash] = zDash;
+                    if (dotProduct >= 0)
+                    {
+                        int luminenceIndex = (int)(dotProduct * 11);
+                        output[xDash, yDash] = ".,-~:;=!*#$@"[luminenceIndex];
+                    }
+                    else
+                        output[xDash, yDash] = '.';
+                }
             }
+            for(int j = 0; j < height; j++)
+            {
+                for(int i = 0; i < width; i++)
+                {
+                    Console.Write(output[i, j]);
+                }
+            }
+
+
         }
 
-        static Vector3 getCoords(float theta, Vector3 coordinates)
+        static void Main(string[] args)
         {
-            float x = coordinates.X;
-            float y = coordinates.Y;
-            float z = coordinates.Z;
-            Vector3 coord = new Vector3(x, y, z);
-            float sinTheta = MathF.Sin(theta);
-            float cosTheta = MathF.Cos(theta);
-            coord.X = (z *  sinTheta) + (cosTheta * x);
-            coord.Z = (z * cosTheta) - (x * sinTheta); 
-            return coord;
+            getPoints();
+            Console.ReadKey();
+            while (true)
+            {
+                render();
+                theta += theta_spacing;
+                Console.SetCursorPosition(0, 0);
+            }
+
+
+
         }
-
-        public static void drawChar(Vector3 coord, Point point)
-        {
-            Console.SetCursorPosition((int)coord.X + alpha, (int)coord.Y + beta);
-            //double magOfPositionVector = Math.Sqrt((coord.X * coord.X) + (coord.Y * coord.Y)+ (coord.Z * coord.Z));
-            //double dotOfNormalAndLight = Vector3.Dot(coord, lightVector);
-            //point.normalVector = calcNormalAt(coord);
-            float magOfNormalVector = point.normalVector.Length();
-            Vector3 normal = point.coord;
-            normal.X = (point.normalVector.Z * MathF.Sin(theta)) + (MathF.Cos(theta) * point.normalVector.X);
-            normal.Z = (point.normalVector.Z * MathF.Cos(theta)) - (point.normalVector.X * MathF.Sin(theta));
-            double dotOfNormalAndLight = Vector3.Dot(normal, lightVector);
-            double luminence = dotOfNormalAndLight/(magOfLightVector * normal.Length());
-            char x = 'Y';
-            if (luminence <= 0)
-                x = '.';
-            else if (luminence <= 0.08f)
-                x = ',';
-            else if (luminence <= 0.16f)
-                x = '-';
-            else if (luminence <= 0.24f)
-                x = '~';
-            else if (luminence <= 0.32f)
-                x = ':';
-            else if (luminence <= 0.40f)
-                x = ';';
-            else if (luminence <= 0.50f)
-                x = '=';
-            else if (luminence <= 0.60f)
-                x = '!';
-            else if (luminence <= 0.70f)
-                x = '*';
-            else if (luminence <= 0.80f)
-                x = '#';
-            else if (luminence <= 0.90f)
-                x = '$';
-            else if (luminence <= 1f)
-                x = '@';
-            else
-                x = 'x';
-
-            //Console.WriteLine("Position Vector: " + coord + " Luminence: " + luminence + " Character:" + x);
-            Console.Write(x);
-        }
-
-        static public Vector3 calcNormalAt(Vector3 coord)
-        {
-            Vector3 normalVector = new Vector3(0, 0, 1);
-            float x = coord.X;
-            float y = coord.Y;
-            float z = coord.Z;
-            normalVector.X = (6 * x * ((x * x) + (y * y) + (2 * z * z) - 100) * ((x * x) + (y * y) + (2 * z * z) - 100)) + (80 * x * y * y * y);
-            normalVector.Y = (6 * y * ((x * x) + (y * y) + (2 * z * z) - 100) * ((x * x) + (y * y) + (2 * z * z) - 100)) + (120 * x * x * y * y) - (0.135f * y * y * z * z);
-            normalVector.Z = (12 * z * ((x * x) + (y * y) + (2 * z * z) - 100) * ((x * x) + (y * y) + (2 * z * z) - 100)) - (0.09f * y * y * y * z);
-            return normalVector;
-        }
-
-        //static void Main(string[] args)
-        //{
-        //    List<Point> points = new List<Point>();
-        //    for (int x = -windowWidth / 2; x < windowWidth / 2; x++)
-        //    {
-        //        for (int y = -windowWidth / 2; y < windowWidth / 2; y++)
-        //        {
-        //            int xSquare = x * x;
-        //            int xCube = x * x * x;
-        //            int ySquare = y * y;
-        //            int yCube = y * y * y;
-        //            double prevValue = 1;
-        //            for (int k = -camDistance; k <= camDistance; k++)
-        //            {
-        //                double currValue = (MathF.Pow((float)(xSquare + (2 * k * k) + ySquare - 100), 3) + (40 * xSquare * yCube) - (0.045 * k * k * yCube));
-        //                //if ((MathF.Pow((float)(ySquare + (2 * k * k) + xSquare - 100), 3) - (40 *ySquare * xCube) - (0.045 * k * k * xCube)) <= 0)  //front horizontal
-        //                if (prevValue * currValue <= 0)  //front vertical
-        //                                                 //if ((MathF.Pow((float)(xSquare + (2 * ySquare) + (k * k) - 100), 3) - (40 * xSquare * k * k * k) - (0.045 * ySquare * k * k * k)) <= 0) //top horizontal
-        //                {
-        //                    points.Add(new Point(new Vector3(x, y, k)));
-        //                }
-        //                prevValue = currValue;
-        //            }
-        //        }
-        //    }
-        //    renderFrame(points);
-        //    Console.ReadKey();
-        //    foreach (Point point in points)
-        //        Console.WriteLine(point);
-        //    Console.ReadKey();
-        //    for (; ; )
-        //    {
-        //        Console.Clear();
-        //        renderFrame(points);
-        //        theta += 0.2f;
-        //        if (theta >= 2 * Math.PI)
-        //        {
-        //            theta = 0;
-        //        }
-        //        Thread.Sleep(10);
-        //    }
-        //}
-
     }
 }
