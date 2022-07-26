@@ -16,7 +16,6 @@ namespace ascii_heart
         const int height = 50;
         const int zDistance = 50;
         static Vector3 light = new Vector3(0, 0, 1);
-
         static List<Point> points = new List<Point>();
 
         public class Point
@@ -69,6 +68,7 @@ namespace ascii_heart
             }
 
         }
+
         static void render()
         {
             float[,] zBuffer = new float[width, height];
@@ -84,7 +84,7 @@ namespace ascii_heart
             int x = 0, y = 0, z = 0;
             int xDash = 0, yDash = 0;
             float zDash = 0;
-            foreach(Point point in points)
+            foreach (Point point in points)
             {
                 x = (int)point.pos.X;
                 y = (int)point.pos.Y;
@@ -111,22 +111,20 @@ namespace ascii_heart
                     zBuffer[xDash, yDash] = zDash;
                     if (dotProduct >= 0)
                     {
-                        int luminenceIndex = (int)(dotProduct * 11);
+                        int luminenceIndex = (int)(dotProduct * 11.35f);
                         output[xDash, yDash] = ".,-~:;=!*#$@"[luminenceIndex];
                     }
                     else
                         output[xDash, yDash] = '.';
                 }
             }
-            for(int j = 0; j < height; j++)
+            for (int j = 0; j < height; j++)
             {
-                for(int i = 0; i < width; i++)
+                for (int i = 0; i < width; i++)
                 {
                     Console.Write(output[i, j]);
                 }
             }
-
-
         }
 
         static void Main(string[] args)
@@ -139,9 +137,6 @@ namespace ascii_heart
                 theta += theta_spacing;
                 Console.SetCursorPosition(0, 0);
             }
-
-
-
         }
     }
 }
