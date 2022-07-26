@@ -10,11 +10,12 @@ namespace ascii_heart
 {
     class newProgram
     {
-        const float theta_spacing = 0.02f;
+        const float theta_spacing = 0.7f;
+        static float theta = 0;
         const int width = 211;
         const int height = 50;
-        const int zDistance = 5;
-        static Vector3 light = new Vector3(0, 0, -1);
+        const int zDistance = 50;
+        static Vector3 light = new Vector3(0, 0, 1);
 
         static void render()
         {
@@ -29,12 +30,13 @@ namespace ascii_heart
                 }
             }
             int xSq = 0, ySq = 0, zSq = 0, xCu = 0, yCu = 0, zCu = 0;
-            int xDash = 0, yDash = 0, zDash = 0;
-            for (int y = -50; y < 50; y++)
+            int xDash = 0, yDash = 0;
+            float zDash = 0;
+            for (int y = -20; y < 20; y++)
             {
-                for (int x = -50; x < 50; x++)
+                for (int x = -20; x < 20; x++)
                 {
-                    for (int z = -50; z <= 50; z++)
+                    for (int z = -20; z <= 20; z++)
                     {
                         xSq = x * x;
                         ySq = y * y;
@@ -44,9 +46,12 @@ namespace ascii_heart
                         zCu = z * z * z;
                         if (Math.Pow((xSq + (2 * zSq) + ySq - 200), 3) + (40 * xSq * yCu) - (0.045 * zSq * yCu) <= 0)
                         {
-                            zDash = z + zDistance;
-                            xDash = width / 2 + x * (30 / (zDash + 30));  //30 is viewer distance from screen, i.e., k1
-                            yDash = height / 2 + y * (30 / (zDash + 30));
+                            double xAfterRevolving = 0, zAfterRevolving = 0;
+                            xAfterRevolving = z * Math.Sin(theta) + x * Math.Cos(theta);
+                            zAfterRevolving = z * Math.Cos(theta) - x * Math.Sin(theta);
+                            zDash = -(int)zAfterRevolving + zDistance;
+                            xDash = width / 2 + (int)(xAfterRevolving * (zDash / (zDash + 10)));  //30 is viewer distance from screen, i.e., k1
+                            yDash = height / 2 + (int)(y * (zDash / (zDash + 10)));
 
 
                             //calculate normal vector
@@ -59,8 +64,13 @@ namespace ascii_heart
                             unitNormal.Y = normal.Y / normal.Length();
                             unitNormal.Z = normal.Z / normal.Length();
 
+                            Vector3 unitNormalAfterRevolving = new Vector3();
+                            unitNormalAfterRevolving.Y = unitNormal.Y;
+                            unitNormalAfterRevolving.X = (float)(unitNormal.Z * (Math.Sin(theta)) + unitNormal.X * (Math.Cos(theta)));
+                            unitNormalAfterRevolving.Z = (float)(unitNormal.Z * (Math.Cos(theta)) - unitNormal.X * (Math.Sin(theta)));
+
                             //dot product normal with lighting vector
-                            float dotProduct = Vector3.Dot(unitNormal, light / light.Length());
+                            float dotProduct = Vector3.Dot(unitNormalAfterRevolving, light / light.Length());
 
                             //print character according to lumination
                             if (zDash < zBuffer[xDash, yDash])
@@ -71,6 +81,8 @@ namespace ascii_heart
                                     int luminenceIndex = (int)(dotProduct * 11);
                                     output[xDash, yDash] = ".,-~:;=!*#$@"[luminenceIndex];
                                 }
+                                else
+                                    output[xDash, yDash] = '.';
                             }
 
                         }
@@ -84,30 +96,24 @@ namespace ascii_heart
                     Console.Write(output[x, y]);
                 }
             }
+            theta += theta_spacing;
 
 
         }
 
         static void Main(string[] args)
         {
-            while(true)
+
+            Console.ReadKey();
+            while (true)
             {
-                Console.ReadKey();
                 Console.Clear();
 
                 render();
-                
+
             }
-            
-
-            //draw heart
-
-            //spin heart
-            //project heart onto 2d screen
-            //determine illumination by calculating surface normal(given a light source)
 
 
-            //misc
 
         }
     }

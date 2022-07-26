@@ -126,7 +126,7 @@ namespace ascii_heart
         //                double currValue = (MathF.Pow((float)(xSquare + (2 * k * k) + ySquare - 100), 3) + (40 * xSquare * yCube) - (0.045 * k * k * yCube));
         //                //if ((MathF.Pow((float)(ySquare + (2 * k * k) + xSquare - 100), 3) - (40 *ySquare * xCube) - (0.045 * k * k * xCube)) <= 0)  //front horizontal
         //                if (prevValue * currValue <= 0)  //front vertical
-        //                                                                                                                                             //if ((MathF.Pow((float)(xSquare + (2 * ySquare) + (k * k) - 100), 3) - (40 * xSquare * k * k * k) - (0.045 * ySquare * k * k * k)) <= 0) //top horizontal
+        //                                                 //if ((MathF.Pow((float)(xSquare + (2 * ySquare) + (k * k) - 100), 3) - (40 * xSquare * k * k * k) - (0.045 * ySquare * k * k * k)) <= 0) //top horizontal
         //                {
         //                    points.Add(new Point(new Vector3(x, y, k)));
         //                }
