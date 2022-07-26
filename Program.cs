@@ -10,13 +10,13 @@ namespace ascii_heart
 {
     class Program
     {
-        const float theta_spacing = 0.3f;
-        static float theta = 0;
-        const int width = 211;
-        const int height = 50;
-        const int zDistance = 50;
-        static Vector3 light = new Vector3(0, 0, 1);
-        static List<Point> points = new List<Point>();
+        const float theta_spacing = 0.3f;   //rotation speed
+        static float theta = 0;             //initial rotation
+        const int width = 211;              //width of terminal
+        const int height = 50;              //height of terminal
+        const int zDistance = 50;           //distance of 3D object from screen
+        static Vector3 light = new Vector3(0, 0, 1);        //light vector - change here to change the direction of light
+        static List<Point> points = new List<Point>();      //A list to hold all the points satisfying the condition of 3D object
 
         public class Point
         {
@@ -71,8 +71,8 @@ namespace ascii_heart
 
         static void render()
         {
-            float[,] zBuffer = new float[width, height];
-            char[,] output = new char[width, height];
+            float[,] zBuffer = new float[width, height];        //to keep track of the nearest point of object to the screen
+            char[,] output = new char[width, height];           //to keep track of the character to show at each pixel on the screen
             for (int j = 0; j < height; j++)
             {
                 for (int i = 0; i < width; i++)
@@ -90,6 +90,8 @@ namespace ascii_heart
                 y = (int)point.pos.Y;
                 z = (int)point.pos.Z;
 
+                //Plotting the 3D object onto 2D screen. xDash and yDash represent the pixel on which a specific point will be projected to
+                //zDash is z after revolving + zDistance => the distance of that point from the screen
                 double xAfterRevolving = 0, zAfterRevolving = 0;
                 xAfterRevolving = z * Math.Sin(theta) + x * Math.Cos(theta);
                 zAfterRevolving = z * Math.Cos(theta) - x * Math.Sin(theta);
@@ -97,28 +99,30 @@ namespace ascii_heart
                 xDash = width / 2 + (int)(xAfterRevolving * (200 / (zDash + 200)));  //200 is viewer distance from screen, i.e., k1
                 yDash = height / 2 + (int)(y * (200 / (zDash + 200)));
 
+                //Calculating Unit Vector of a point on the object after it has rotated through an angle of Theta
                 Vector3 unitNormalAfterRevolving = new Vector3();
                 unitNormalAfterRevolving.Y = point.unitNormal.Y;
                 unitNormalAfterRevolving.X = (float)(point.unitNormal.Z * (Math.Sin(theta)) + point.unitNormal.X * (Math.Cos(theta)));
                 unitNormalAfterRevolving.Z = (float)(point.unitNormal.Z * (Math.Cos(theta)) - point.unitNormal.X * (Math.Sin(theta)));
 
-                //dot product normal with lighting vector
+                //dot product of unit normal vector with unit lighting vector
                 float dotProduct = Vector3.Dot(unitNormalAfterRevolving, light / light.Length());
 
-                //print character according to lumination
+                //if zDash of current point is less than zBuffer, i.e, it is the nearest point on xDash, yDash to the screen, only then print it.
+                //we don't need to show points which are behind other points
                 if (zDash < zBuffer[xDash, yDash])
                 {
                     zBuffer[xDash, yDash] = zDash;
-                    if (dotProduct >= 0)
+                    if (dotProduct >= 0)    //show only those points which are facing towards light otherwise show them with a dot '.'
                     {
-                        int luminenceIndex = (int)(dotProduct * 11.35f);
-                        output[xDash, yDash] = ".,-~:;=!*#$@"[luminenceIndex];
+                        int luminenceIndex = (int)(dotProduct * 11.35f);            //dotProduct varies from 0 to 1 => luminence varies from 0 to 11
+                        output[xDash, yDash] = ".,-~:;=!*#$@"[luminenceIndex];      //feeding characters to the output buffer according to lumination
                     }
                     else
                         output[xDash, yDash] = '.';
                 }
             }
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < height; j++)        //printing the output buffer
             {
                 for (int i = 0; i < width; i++)
                 {
